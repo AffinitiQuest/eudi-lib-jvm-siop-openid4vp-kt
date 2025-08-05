@@ -151,9 +151,10 @@ sealed interface SupportedClientIdScheme {
 data class VpFormats(
     val sdJwtVc: VpFormat.SdJwtVc? = null,
     val msoMdoc: VpFormat.MsoMdoc? = null,
+    val jwtVp: VpFormat.JwtVp? = null,
 ) {
     init {
-        require(sdJwtVc != null || msoMdoc != null) {
+        require(sdJwtVc != null || msoMdoc != null || jwtVp != null) {
             "At least one format must be specified."
         }
     }
@@ -167,14 +168,16 @@ data class VpFormats(
             ensureUniquePerFormat(formats)
             val sdJwt = formats.filterIsInstance<VpFormat.SdJwtVc>().firstOrNull()
             val msoMdoc = formats.filterIsInstance<VpFormat.MsoMdoc>().firstOrNull()
-            VpFormats(sdJwt, msoMdoc)
+            val jwtVp = formats.filterIsInstance<VpFormat.JwtVp>().firstOrNull()
+            VpFormats(sdJwt, msoMdoc, jwtVp)
         }
 
         fun intersect(thiz: VpFormats, that: VpFormats): VpFormats? {
             val scg = thiz.sdJwtVc?.intersect(that.sdJwtVc)
             val mcg = thiz.msoMdoc?.intersect(that.msoMdoc)
-            return if (scg != null || mcg != null) {
-                VpFormats(scg, mcg)
+            val jcg = thiz.jwtVp?.intersect(that.jwtVp)
+            return if (scg != null || mcg != null || jcg != null) {
+                VpFormats(scg, mcg, jcg)
             } else null
         }
 
@@ -189,12 +192,13 @@ data class VpFormats(
         }
 
         private enum class FormatName {
-            MSO_MDOC, SD_JWT_VC
+            MSO_MDOC, SD_JWT_VC, JWT_VP
         }
 
         private fun VpFormat.formatName() = when (this) {
             is VpFormat.MsoMdoc -> FormatName.MSO_MDOC
             is VpFormat.SdJwtVc -> FormatName.SD_JWT_VC
+            is VpFormat.JwtVp -> FormatName.JWT_VP
         }
     }
 }
@@ -352,6 +356,27 @@ sealed interface VpFormat : java.io.Serializable {
 
         companion object {
             val ES256 = SdJwtVc(listOf(JWSAlgorithm.ES256), listOf(JWSAlgorithm.ES256))
+        }
+    }
+
+    data class JwtVp(
+        val algorithms: List<JWSAlgorithm>
+    ) : VpFormat {
+        init {
+            require(algorithms.isNotEmpty()) { "Mso-doc algorithms cannot be empty" }
+        }
+
+        fun intersect(that: JwtVp?): JwtVp? {
+            if (that == null) return null
+
+            val algs = algorithms.intersect(that.algorithms.toSet())
+            return if (algs.isNotEmpty())
+                JwtVp(algs.toList())
+            else null
+        }
+
+        companion object {
+            val ES256 = JwtVp(listOf(JWSAlgorithm.ES256))
         }
     }
 

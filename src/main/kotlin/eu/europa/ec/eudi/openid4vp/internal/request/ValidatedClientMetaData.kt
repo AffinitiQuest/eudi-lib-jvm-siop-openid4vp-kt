@@ -43,10 +43,11 @@ internal data class UnvalidatedClientMetaData(
 internal class VpFormatsTO(
     @SerialName("vc+sd-jwt") val vcSdJwt: VcSdJwtTO? = null,
     @SerialName("mso_mdoc") val msoMdoc: MsoMdocTO? = null,
+    @SerialName("jwt_vp") val jwtVp: JwtVcTO? = null
 ) {
 
     fun toDomain(): VpFormats {
-        return VpFormats(vcSdJwt?.toDomain(), msoMdoc?.toDomain())
+        return VpFormats(vcSdJwt?.toDomain(), msoMdoc?.toDomain(), jwtVp?.toDomain())
     }
 
     companion object {
@@ -55,6 +56,7 @@ internal class VpFormatsTO(
             return VpFormatsTO(
                 vcSdJwt = fs.sdJwtVc?.let { VcSdJwtTO.make(it) },
                 msoMdoc = fs.msoMdoc?.let { MsoMdocTO.make(it) },
+                jwtVp = fs.jwtVp?.let { JwtVcTO.make(it) },
             )
         }
     }
@@ -78,6 +80,22 @@ internal class VcSdJwtTO(
                 sdJwtAlgorithms = f.sdJwtAlgorithms.takeIf { it.isNotEmpty() }?.map { it.name },
                 kdJwtAlgorithms = f.kbJwtAlgorithms.takeIf { it.isNotEmpty() }?.map { it.name },
             )
+        }
+    }
+}
+
+@Serializable
+internal class JwtVcTO(
+    @SerialName("alg") val alg: List<String>? = null,
+) {
+    fun toDomain(): VpFormat.JwtVp {
+        return VpFormat.JwtVp(alg.algs())
+    }
+
+    companion object {
+
+        fun make(f: VpFormat.JwtVp): JwtVcTO {
+            return JwtVcTO(f.algorithms.map { it.name })
         }
     }
 }

@@ -405,6 +405,7 @@ private class Wallet(
                                     id = inputDescriptor.id,
                                     format = format,
                                     path = JsonPath.jsonPath("$")!!,
+                                    path_nested = null
                                 ),
                             ),
                         ),
