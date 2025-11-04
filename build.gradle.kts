@@ -3,6 +3,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension
 import java.net.URL
+import java.util.Properties
+import java.io.FileInputStream
 
 object Meta {
     const val BASE_URL = "https://github.com/eu-digital-identity-wallet/eudi-lib-jvm-siop-openid4vp-kt"
@@ -24,6 +26,14 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven {
+        name = "affinitiquest-dev"
+        url = uri("https://pkgs.dev.azure.com/affinitiquest/AffinitiQuest/_packaging/affinitiquest-dev/maven/v1")
+        credentials {
+            username = getPropertyFromFile("maven.username")
+            password = getPropertyFromFile("maven.password")
+        }
+    }
     maven {
         url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         mavenContent { snapshotsOnly() }
@@ -127,6 +137,30 @@ tasks.withType<DokkaTask>().configureEach {
                 }
         }
     }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "affinitiquest-dev"
+            url = uri("https://pkgs.dev.azure.com/affinitiquest/AffinitiQuest/_packaging/affinitiquest-dev/maven/v1")
+            credentials {
+                username = getPropertyFromFile("maven.username")
+                password = getPropertyFromFile("maven.password")
+            }
+        }
+    }
+}
+
+// Helper function to read from a properties file.
+fun getPropertyFromFile(key: String): String? {
+    val propertyFile = file("maven.properties")
+    if(propertyFile.exists()) {
+        val properties = Properties()
+        propertyFile.inputStream().use { properties.load(it) }
+        return properties.getProperty(key)
+    }
+    return null
 }
 
 mavenPublishing {
