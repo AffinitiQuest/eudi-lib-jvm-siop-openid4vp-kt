@@ -5,7 +5,7 @@ sonarqube = "6.0.1.5171"
 spotless = "7.0.2"
 kotlin = "2.0.21"
 ktor = "3.0.1"
-presentation-exchange = "0.3.0-aq"
+presentation-exchange = "0.3.0"
 nimbus-sdk = "11.20.1"
 uri-kmp = "0.0.19"
 java = "17"
@@ -25,7 +25,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
-presentation-exchange = { module = "eu.europa.ec.eudi:eudi-lib-jvm-presentation-exchange-kt", version.ref = "presentation-exchange" }
+presentation-exchange = { module = "eu.europa.ec.eudi.aq:eudi-lib-jvm-presentation-exchange-kt", version.ref = "presentation-exchange" }
 nimbus-oauth2-oidc-sdk = { module = "com.nimbusds:oauth2-oidc-sdk", version.ref = "nimbus-sdk" }
 uri-kmp = { module = "com.eygraber:uri-kmp", version.ref = "uri-kmp" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
