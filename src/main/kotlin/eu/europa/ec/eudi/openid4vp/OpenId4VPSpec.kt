@@ -63,6 +63,7 @@ object OpenId4VPSpec {
     const val DCQL_PATH: String = "path"
     const val DCQL_VALUES: String = "values"
     const val DCQL_SD_JWT_VC_VCT_VALUES: String = "vct_values"
+    const val DCQL_JWT_VC_TYPE_VALUES: String = "type_values"
     const val DCQL_MSO_MDOC_DOCTYPE_VALUE: String = "doctype_value"
     const val DCQL_MSO_MDOC_INTENT_TO_RETAIN: String = "intent_to_retain"
     const val DCQL_TRUSTED_AUTHORITY_TYPE: String = "type"
@@ -87,6 +88,7 @@ object OpenId4VPSpec {
     const val SD_JWT_VC_KB_JWT_ALGORITHMS: String = "kb-jwt_alg_values"
     const val MSO_MDOC_ISSUERAUTH_ALGORITHMS: String = "issuerauth_alg_values"
     const val MSO_MDOC_DEVICEAUTH_ALGORITHMS: String = "deviceauth_alg_values"
+    const val JWT_VC_ALGORITHMS: String = "alg_values"
 
     const val VERIFIER_INFO: String = "verifier_info"
     const val VERIFIER_INFO_FORMAT: String = "format"

@@ -35,6 +35,9 @@ dependencies {
     api(libs.ktor.client.serialization)
     api(libs.ktor.serialization.kotlinx.json)
     implementation(libs.bouncy.castle)
+    // Explicitly declare Bouncy Castle transitive dependencies to resolve version range issues
+    implementation("org.bouncycastle:bcprov-jdk18on:${libs.versions.bouncyCastle.get()}")
+    implementation("org.bouncycastle:bcutil-jdk18on:${libs.versions.bouncyCastle.get()}")
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.ktor.client.okhttp)
@@ -98,6 +101,10 @@ tasks.jar {
             ),
         )
     }
+}
+
+signing {
+    isRequired = false
 }
 
 //

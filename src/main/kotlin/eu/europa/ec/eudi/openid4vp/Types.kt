@@ -300,10 +300,11 @@ value class CoseAlgorithm(val value: Int) : java.io.Serializable {
 data class VpFormatsSupported(
     @SerialName(OpenId4VPSpec.FORMAT_SD_JWT_VC) val sdJwtVc: SdJwtVc? = null,
     @SerialName(OpenId4VPSpec.FORMAT_MSO_MDOC) val msoMdoc: MsoMdoc? = null,
+    @SerialName(OpenId4VPSpec.FORMAT_W3C_SIGNED_JWT) val jwtVc: JwtVc? = null,
 ) : java.io.Serializable {
 
     init {
-        require(null != sdJwtVc || null != msoMdoc) {
+        require(null != sdJwtVc || null != msoMdoc || null != jwtVc) {
             "At least one format must be specified."
         }
     }
@@ -354,6 +355,19 @@ data class VpFormatsSupported(
 
         companion object
     }
+
+    @Serializable
+    data class JwtVc(
+        @SerialName(OpenId4VPSpec.JWT_VC_ALGORITHMS) val algValues: List<JWSAlgorithm>? = null,
+    ) : java.io.Serializable {
+        init {
+            algValues?.let {
+                require(it.isNotEmpty()) { "IssuerAuth algorithms cannot be empty" }
+            }
+        }
+
+        companion object
+    }
 }
 
 internal fun VpFormatsSupported.containsAll(formats: Collection<Format>): Boolean =
@@ -361,6 +375,7 @@ internal fun VpFormatsSupported.containsAll(formats: Collection<Format>): Boolea
         when (it) {
             Format.SdJwtVc -> null != sdJwtVc
             Format.MsoMdoc -> null != msoMdoc
+            Format.W3CJwtVcJson -> null != jwtVc
             else -> false
         }
     }
@@ -369,4 +384,5 @@ internal fun VpFormatsSupported.filter(formats: Collection<Format>): VpFormatsSu
     VpFormatsSupported(
         sdJwtVc = sdJwtVc?.takeIf { Format.SdJwtVc in formats },
         msoMdoc = msoMdoc?.takeIf { Format.MsoMdoc in formats },
+        jwtVc = jwtVc?.takeIf { Format.W3CJwtVcJson in formats },
     )

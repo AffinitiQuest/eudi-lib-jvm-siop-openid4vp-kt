@@ -198,11 +198,18 @@ private fun resolveCommonGround(
             }
         } else null
 
-    ensure(null != sdJwtVc || null != msoMdoc) {
+    val jwtVc =
+        if (null != verifierSupported.jwtVc) {
+            walletSupported.jwtVc?.let {
+                resolveCommonGround(walletSupported = it, verifierSupported = verifierSupported.jwtVc)
+            }
+        } else null
+
+    ensure(null != sdJwtVc || null != msoMdoc || null != jwtVc) {
         ResolutionError.ClientVpFormatsNotSupportedFromWallet.asException()
     }
 
-    return VpFormatsSupported(sdJwtVc, msoMdoc)
+    return VpFormatsSupported(sdJwtVc, msoMdoc, jwtVc)
 }
 
 private fun resolveCommonGround(
@@ -251,4 +258,27 @@ private fun resolveCommonGround(
     val issuerAuthAlgorithms = common(walletSupported.issuerAuthAlgorithms, verifierSupported.issuerAuthAlgorithms)
     val deviceAuthAlgorithms = common(walletSupported.deviceAuthAlgorithms, verifierSupported.deviceAuthAlgorithms)
     return VpFormatsSupported.MsoMdoc(issuerAuthAlgorithms = issuerAuthAlgorithms, deviceAuthAlgorithms = deviceAuthAlgorithms)
+}
+
+private fun resolveCommonGround(
+    walletSupported: VpFormatsSupported.JwtVc,
+    verifierSupported: VpFormatsSupported.JwtVc,
+): VpFormatsSupported.JwtVc {
+    fun common(
+        walletSupported: List<JWSAlgorithm>?,
+        verifierSupported: List<JWSAlgorithm>?,
+    ): List<JWSAlgorithm>? =
+        when {
+            null != walletSupported && null != verifierSupported -> {
+                val common = walletSupported.intersect(verifierSupported).toList().takeIf { it.isNotEmpty() }
+                ensureNotNull(common) {
+                    ResolutionError.ClientVpFormatsNotSupportedFromWallet.asException()
+                }
+            }
+
+            else -> verifierSupported ?: walletSupported
+        }
+
+    val algValues = common(walletSupported.algValues, verifierSupported.algValues)
+    return VpFormatsSupported.JwtVc(algValues = algValues)
 }

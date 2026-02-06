@@ -355,6 +355,7 @@ value class ClaimSet(val value: List<ClaimId>) : java.io.Serializable {
 
 val CredentialQuery.metaMsoMdoc: DCQLMetaMsoMdocExtensions? get() = meta.metaAs()
 val CredentialQuery.metaSdJwtVc: DCQLMetaSdJwtVcExtensions? get() = meta.metaAs()
+val CredentialQuery.metaJwtVc: DCQLMetaJwtVcExtensions? get() = meta.metaAs()
 internal inline fun <reified T> JsonObject?.metaAs(): T? = this?.let { jsonSupport.decodeFromJsonElement(it) }
 
 @Serializable
@@ -513,6 +514,27 @@ data class DCQLMetaSdJwtVcExtensions(
     init {
         require(vctValues.isNotEmpty()) { "${OpenId4VPSpec.DCQL_SD_JWT_VC_VCT_VALUES} cannot be empty" }
         require(vctValues.all { it.isNotBlank() }) { "${OpenId4VPSpec.DCQL_SD_JWT_VC_VCT_VALUES} cannot contain blank values" }
+    }
+}
+
+//
+// JWT-VC
+//
+
+@Serializable
+data class DCQLMetaJwtVcExtensions(
+    /**
+     * Specifies allowed values for the type of the requested Verifiable Credential.
+     * All elements in the array MUST be valid type identifiers.
+     * The Wallet may return credentials that inherit from any of the specified types
+     */
+    @SerialName(OpenId4VPSpec.DCQL_JWT_VC_TYPE_VALUES) @Required val typeValues: List<List<String>>,
+
+) : java.io.Serializable {
+    init {
+        require(typeValues.isNotEmpty()) { "${OpenId4VPSpec.DCQL_JWT_VC_TYPE_VALUES} cannot be empty" }
+        require(typeValues.all { it.isNotEmpty()}) { "${OpenId4VPSpec.DCQL_JWT_VC_TYPE_VALUES} each cannot be empty" }
+        require(typeValues.all { it.all { it.isNotBlank() }}) { "${OpenId4VPSpec.DCQL_JWT_VC_TYPE_VALUES} each cannot contain blank values" }
     }
 }
 
