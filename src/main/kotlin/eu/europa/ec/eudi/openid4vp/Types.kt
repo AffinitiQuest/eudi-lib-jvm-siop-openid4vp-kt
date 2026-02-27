@@ -301,10 +301,12 @@ data class VpFormatsSupported(
     @SerialName(OpenId4VPSpec.FORMAT_SD_JWT_VC) val sdJwtVc: SdJwtVc? = null,
     @SerialName(OpenId4VPSpec.FORMAT_MSO_MDOC) val msoMdoc: MsoMdoc? = null,
     @SerialName(OpenId4VPSpec.FORMAT_W3C_SIGNED_JWT) val jwtVc: JwtVc? = null,
+    @SerialName(OpenId4VPSpec.FORMAT_W3C_LDP_VC) val ldpVc: LdpVc? = null,
+    @SerialName(OpenId4VPSpec.FORMAT_W3C_DI_VC) val diVc: DiVc? = null,
 ) : java.io.Serializable {
 
     init {
-        require(null != sdJwtVc || null != msoMdoc || null != jwtVc) {
+        require(null != sdJwtVc || null != msoMdoc || null != jwtVc || null != ldpVc || null != diVc) {
             "At least one format must be specified."
         }
     }
@@ -368,6 +370,34 @@ data class VpFormatsSupported(
 
         companion object
     }
+
+    @Serializable
+    data class LdpVc(
+        @SerialName(OpenId4VPSpec.LDP_VC_PROOF_TYPES) val proofTypes: List<String>? = null,
+    ) : java.io.Serializable {
+        init {
+            proofTypes?.let {
+                require(it.isNotEmpty()) { "LDP VC proof types cannot be empty" }
+                require(it.all { type -> type.isNotBlank() }) { "LDP VC proof types cannot contain blank values" }
+            }
+        }
+
+        companion object
+    }
+
+    @Serializable
+    data class DiVc(
+        @SerialName(OpenId4VPSpec.DI_VC_PROOF_TYPES) val proofTypes: List<String>? = null,
+    ) : java.io.Serializable {
+        init {
+            proofTypes?.let {
+                require(it.isNotEmpty()) { "DI VC proof types cannot be empty" }
+                require(it.all { type -> type.isNotBlank() }) { "DI VC proof types cannot contain blank values" }
+            }
+        }
+
+        companion object
+    }
 }
 
 internal fun VpFormatsSupported.containsAll(formats: Collection<Format>): Boolean =
@@ -376,6 +406,8 @@ internal fun VpFormatsSupported.containsAll(formats: Collection<Format>): Boolea
             Format.SdJwtVc -> null != sdJwtVc
             Format.MsoMdoc -> null != msoMdoc
             Format.W3CJwtVcJson -> null != jwtVc
+            Format.W3CLdpVc -> null != ldpVc
+            Format.W3CDiVc -> null != diVc
             else -> false
         }
     }
@@ -385,4 +417,6 @@ internal fun VpFormatsSupported.filter(formats: Collection<Format>): VpFormatsSu
         sdJwtVc = sdJwtVc?.takeIf { Format.SdJwtVc in formats },
         msoMdoc = msoMdoc?.takeIf { Format.MsoMdoc in formats },
         jwtVc = jwtVc?.takeIf { Format.W3CJwtVcJson in formats },
+        ldpVc = ldpVc?.takeIf { Format.W3CLdpVc in formats },
+        diVc = diVc?.takeIf { Format.W3CDiVc in formats },
     )

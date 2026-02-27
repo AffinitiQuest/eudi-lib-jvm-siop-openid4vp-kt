@@ -205,11 +205,25 @@ private fun resolveCommonGround(
             }
         } else null
 
-    ensure(null != sdJwtVc || null != msoMdoc || null != jwtVc) {
+    val ldpVc =
+        if (null != verifierSupported.ldpVc) {
+            walletSupported.ldpVc?.let {
+                resolveCommonGround(walletSupported = it, verifierSupported = verifierSupported.ldpVc)
+            }
+        } else null
+
+    val diVc =
+        if (null != verifierSupported.diVc) {
+            walletSupported.diVc?.let {
+                resolveCommonGround(walletSupported = it, verifierSupported = verifierSupported.diVc)
+            }
+        } else null
+
+    ensure(null != sdJwtVc || null != msoMdoc || null != jwtVc || null != ldpVc || null != diVc) {
         ResolutionError.ClientVpFormatsNotSupportedFromWallet.asException()
     }
 
-    return VpFormatsSupported(sdJwtVc, msoMdoc, jwtVc)
+    return VpFormatsSupported(sdJwtVc, msoMdoc, jwtVc, ldpVc, diVc)
 }
 
 private fun resolveCommonGround(
@@ -281,4 +295,50 @@ private fun resolveCommonGround(
 
     val algValues = common(walletSupported.algValues, verifierSupported.algValues)
     return VpFormatsSupported.JwtVc(algValues = algValues)
+}
+
+private fun resolveCommonGround(
+    walletSupported: VpFormatsSupported.LdpVc,
+    verifierSupported: VpFormatsSupported.LdpVc,
+): VpFormatsSupported.LdpVc {
+    fun common(
+        walletSupported: List<String>?,
+        verifierSupported: List<String>?,
+    ): List<String>? =
+        when {
+            null != walletSupported && null != verifierSupported -> {
+                val common = walletSupported.intersect(verifierSupported.toSet()).toList().takeIf { it.isNotEmpty() }
+                ensureNotNull(common) {
+                    ResolutionError.ClientVpFormatsNotSupportedFromWallet.asException()
+                }
+            }
+
+            else -> verifierSupported ?: walletSupported
+        }
+
+    val proofTypes = common(walletSupported.proofTypes, verifierSupported.proofTypes)
+    return VpFormatsSupported.LdpVc(proofTypes = proofTypes)
+}
+
+private fun resolveCommonGround(
+    walletSupported: VpFormatsSupported.DiVc,
+    verifierSupported: VpFormatsSupported.DiVc,
+): VpFormatsSupported.DiVc {
+    fun common(
+        walletSupported: List<String>?,
+        verifierSupported: List<String>?,
+    ): List<String>? =
+        when {
+            null != walletSupported && null != verifierSupported -> {
+                val common = walletSupported.intersect(verifierSupported.toSet()).toList().takeIf { it.isNotEmpty() }
+                ensureNotNull(common) {
+                    ResolutionError.ClientVpFormatsNotSupportedFromWallet.asException()
+                }
+            }
+
+            else -> verifierSupported ?: walletSupported
+        }
+
+    val proofTypes = common(walletSupported.proofTypes, verifierSupported.proofTypes)
+    return VpFormatsSupported.DiVc(proofTypes = proofTypes)
 }

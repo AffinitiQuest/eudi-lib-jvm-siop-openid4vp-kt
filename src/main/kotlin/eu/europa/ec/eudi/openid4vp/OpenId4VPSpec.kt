@@ -46,6 +46,8 @@ object OpenId4VPSpec {
     const val FORMAT_MSO_MDOC: String = "mso_mdoc"
     const val FORMAT_SD_JWT_VC: String = "dc+sd-jwt"
     const val FORMAT_W3C_SIGNED_JWT: String = "jwt_vc_json"
+    const val FORMAT_W3C_LDP_VC: String = "ldp_vc"
+    const val FORMAT_W3C_DI_VC: String = "di_vc"
 
     const val DCQL_CREDENTIALS: String = "credentials"
     const val DCQL_CREDENTIAL_SETS: String = "credential_sets"
@@ -64,6 +66,8 @@ object OpenId4VPSpec {
     const val DCQL_VALUES: String = "values"
     const val DCQL_SD_JWT_VC_VCT_VALUES: String = "vct_values"
     const val DCQL_JWT_VC_TYPE_VALUES: String = "type_values"
+    const val DCQL_LDP_VC_TYPE_VALUES: String = "type_values"
+    const val DCQL_DI_VC_TYPE_VALUES: String = "type_values"
     const val DCQL_MSO_MDOC_DOCTYPE_VALUE: String = "doctype_value"
     const val DCQL_MSO_MDOC_INTENT_TO_RETAIN: String = "intent_to_retain"
     const val DCQL_TRUSTED_AUTHORITY_TYPE: String = "type"
@@ -89,6 +93,8 @@ object OpenId4VPSpec {
     const val MSO_MDOC_ISSUERAUTH_ALGORITHMS: String = "issuerauth_alg_values"
     const val MSO_MDOC_DEVICEAUTH_ALGORITHMS: String = "deviceauth_alg_values"
     const val JWT_VC_ALGORITHMS: String = "alg_values"
+    const val LDP_VC_PROOF_TYPES: String = "proof_type"
+    const val DI_VC_PROOF_TYPES: String = "proof_type"
 
     const val VERIFIER_INFO: String = "verifier_info"
     const val VERIFIER_INFO_FORMAT: String = "format"
