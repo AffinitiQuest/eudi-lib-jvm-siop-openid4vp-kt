@@ -30,6 +30,7 @@ value class Format(val value: String) {
         val MsoMdoc: Format get() = Format(OpenId4VPSpec.FORMAT_MSO_MDOC)
         val SdJwtVc: Format get() = Format(OpenId4VPSpec.FORMAT_SD_JWT_VC)
         val W3CJwtVcJson: Format get() = Format(OpenId4VPSpec.FORMAT_W3C_SIGNED_JWT)
+        val W3CJwtVc: Format get() = Format(OpenId4VPSpec.FORMAT_W3C_JWT)
         val W3CLdpVc: Format get() = Format(OpenId4VPSpec.FORMAT_W3C_LDP_VC)
         val W3CDiVc: Format get() = Format(OpenId4VPSpec.FORMAT_W3C_DI_VC)
     }

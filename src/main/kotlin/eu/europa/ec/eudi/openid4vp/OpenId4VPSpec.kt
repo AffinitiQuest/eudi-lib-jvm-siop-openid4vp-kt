@@ -46,6 +46,7 @@ object OpenId4VPSpec {
     const val FORMAT_MSO_MDOC: String = "mso_mdoc"
     const val FORMAT_SD_JWT_VC: String = "dc+sd-jwt"
     const val FORMAT_W3C_SIGNED_JWT: String = "jwt_vc_json"
+    const val FORMAT_W3C_JWT: String = "vc+jwt"
     const val FORMAT_W3C_LDP_VC: String = "ldp_vc"
     const val FORMAT_W3C_DI_VC: String = "di_vc"
 

@@ -27,6 +27,7 @@ import eu.europa.ec.eudi.openid4vp.internal.JWSAlgorithmSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.JsonObject
 import java.net.URI
 import java.net.URL
@@ -300,7 +301,9 @@ value class CoseAlgorithm(val value: Int) : java.io.Serializable {
 data class VpFormatsSupported(
     @SerialName(OpenId4VPSpec.FORMAT_SD_JWT_VC) val sdJwtVc: SdJwtVc? = null,
     @SerialName(OpenId4VPSpec.FORMAT_MSO_MDOC) val msoMdoc: MsoMdoc? = null,
-    @SerialName(OpenId4VPSpec.FORMAT_W3C_SIGNED_JWT) val jwtVc: JwtVc? = null,
+    @SerialName(OpenId4VPSpec.FORMAT_W3C_SIGNED_JWT)
+    @JsonNames(OpenId4VPSpec.FORMAT_W3C_SIGNED_JWT, OpenId4VPSpec.FORMAT_W3C_JWT)
+    val jwtVc: JwtVc? = null,
     @SerialName(OpenId4VPSpec.FORMAT_W3C_LDP_VC) val ldpVc: LdpVc? = null,
     @SerialName(OpenId4VPSpec.FORMAT_W3C_DI_VC) val diVc: DiVc? = null,
 ) : java.io.Serializable {
@@ -405,7 +408,7 @@ internal fun VpFormatsSupported.containsAll(formats: Collection<Format>): Boolea
         when (it) {
             Format.SdJwtVc -> null != sdJwtVc
             Format.MsoMdoc -> null != msoMdoc
-            Format.W3CJwtVcJson -> null != jwtVc
+            Format.W3CJwtVcJson, Format.W3CJwtVc -> null != jwtVc
             Format.W3CLdpVc -> null != ldpVc
             Format.W3CDiVc -> null != diVc
             else -> false
@@ -416,7 +419,7 @@ internal fun VpFormatsSupported.filter(formats: Collection<Format>): VpFormatsSu
     VpFormatsSupported(
         sdJwtVc = sdJwtVc?.takeIf { Format.SdJwtVc in formats },
         msoMdoc = msoMdoc?.takeIf { Format.MsoMdoc in formats },
-        jwtVc = jwtVc?.takeIf { Format.W3CJwtVcJson in formats },
+        jwtVc = jwtVc?.takeIf { Format.W3CJwtVcJson in formats || Format.W3CJwtVc in formats },
         ldpVc = ldpVc?.takeIf { Format.W3CLdpVc in formats },
         diVc = diVc?.takeIf { Format.W3CDiVc in formats },
     )
